@@ -17,12 +17,16 @@ endef
 # 'selecting' stderr, "grep -v" for exclusion but always return "success" from
 # the filter stage to prevent spurious recipe failures.
 define FilterError
-	@echo $1
 	@$(call ErrPipe,$1,{ grep -v $2; true; })
 endef
 
-define SuppressGoVersionWarning
+define SuppressGoVersionWarningNoEcho
 	$(call FilterError,$1,"requires go .* switching to go")
+endef
+
+define SuppressGoVersionWarning
+	@echo $1
+	$(call SuppressGoVersionWarningNoEcho,$1)
 endef
 
 # Use gofumpt to enforce a consistent, opinionated style for go code.
@@ -32,6 +36,6 @@ gofmt:
 # Use checkgofmt to _check_ if there are style violations. Useful for
 # pre-commit hooks.
 checkgofmt:
-	$(call SuppressGoVersionWarning,go run mvdan.cc/gofumpt@v0.9.2 -l .)
+	$(call SuppressGoVersionWarningNoEcho,go run mvdan.cc/gofumpt@v0.9.2 -l .)
 
 .PHONY: gofmt checkgofmt
