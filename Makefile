@@ -2,7 +2,7 @@ SHELL:=/bin/bash
 
 all: release
 
-version:=${file <VERSION}
+version:=${file <dist/VERSION}
 releasedir:=buildlib-v${version}
 releasetarball:=${releasedir}.tar.gz
 
