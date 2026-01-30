@@ -14,4 +14,7 @@ ${releasetarball}: dist
 clean:
 	rm -rf ${releasetarball} ${releasedir}
 
-.PHONY: all release clean
+test:
+	./test/all.sh
+
+.PHONY: all release clean test
