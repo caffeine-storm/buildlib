@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -e
+set -eu
 
 here=$(dirname $0)
 root=$(realpath --relative-to=. $here/..)
