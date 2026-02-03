@@ -5,11 +5,12 @@ set -eu
 here=$(dirname $0)
 root=$(realpath --relative-to=. $here/..)
 
-echo "You can pass '--debug' to this script for make and curl logs"
+echo "You can pass '--debug' to this script for more logs"
 silence="-s"
 for argv ; do
 	if [[ "$argv" == "--debug" ]]; then
 		silence=""
+		set -x
 		break
 	fi
 done
@@ -32,9 +33,18 @@ PASS() {
 	exit 0
 }
 
-# Ensure that we can make a release tarball
 workingcopy=buildlib-v-for-test
 tarball="$workingcopy.tar.gz"
+
+# Before trying much of anything, try to cleanup in case a previous test run
+# bailed out and left artifacts for inspection; they're stale now so they can
+# go.
+cleanup() {
+	rm -rf $workingcopy build.old $tarball update
+}
+cleanup
+
+# Ensure that we can make a release tarball
 make ${silence} -C "$root" release version=-for-test
 if [[ ! -f "$root/$tarball" ]]; then
 	FAIL "can't find release tarball (expecting $tarball)"
@@ -47,8 +57,7 @@ cd "$here"
 root=".."
 
 # Make sure we didn't accidentally create a tar-bomb.
-filelist=$(tar -tf "$tarball")
-if [[ $(echo "$filelist" | grep -v '^buildlib-v-for-test' | wc -l) != 0 ]]; then
+if [[ $(tar -tf "$tarball" | grep -v '^buildlib-v-for-test' | wc -l) != 0 ]]; then
 	FAIL "some tar members weren't in the right directory"
 fi
 
@@ -136,7 +145,6 @@ expect_self_update "self-update should add new files"
 
 assert_clean_slate 3
 
-# Clean up after ourselves
-rm -rf $workingcopy build.old $tarball update
+cleanup
 
 PASS
