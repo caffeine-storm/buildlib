@@ -4,19 +4,17 @@ version:=${file <dist/VERSION}
 releasedir:=buildlib-v${version}
 releasetarball:=${releasedir}.tar.gz
 
-# TODO(tmckee): this is almost-copy-paste from dist/hash.mk ... DRY this out.
-dotmakes:=${shell find dist/ -name '*.mk' -type f | sort}
-
 all: release
 
 release: ${releasetarball}
 
-${releasetarball}: ${dotmakes} dist/VERSION dist/VERSION.hash
-	tar -acf $@ '--transform=s,^dist,${releasedir},' $^
+${releasetarball}: dist/VERSION dist/VERSION.hash
+	@echo hereiam: `pwd`
+	tar -acf $@ '--transform=s,^dist,${releasedir},' $^ \
+		-T <(sed 's,.*  ,dist/,' < dist/VERSION.hash)
 
-dist/VERSION.hash: ${dotmakes}
-	make -C dist/ -f hash.mk local.hash
-	mv dist/local.hash dist/VERSION.hash
+dist/VERSION.hash:
+	$(MAKE) -C dist/ -f hash.mk VERSION.hash
 
 clean:
 	rm -rf ${releasetarball} ${releasedir} dist/VERSION.hash
