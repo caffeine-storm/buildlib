@@ -9,7 +9,6 @@ all: release
 release: ${releasetarball}
 
 ${releasetarball}: dist/VERSION dist/VERSION.hash
-	@echo hereiam: `pwd`
 	tar -acf $@ '--transform=s,^dist,${releasedir},' $^ \
 		-T <(sed 's,.*  ,dist/,' < dist/VERSION.hash)
 
