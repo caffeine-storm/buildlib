@@ -102,17 +102,16 @@ assert_clean_slate() {
 	ERRMSG "PASS"
 }
 
-# TODO(tmckee): passing 'self-update' target doesn't match what's in README.md
 expect_self_update() {
 	ERRMSG " --- $1 ..."
-	make ${silence} -C $workingcopy -f self-update.mk self-update
+	make ${silence} -C $workingcopy -f self-update.mk
 	ERRMSG " --- $1 PASS"
 }
 
 expect_no_self_update() {
 	ERRMSG " --- $1 ..."
 	set +e
-	make ${silence} -C $workingcopy -f self-update.mk self-update && FAIL " --- $1 FAIL"
+	make ${silence} -C $workingcopy -f self-update.mk && FAIL " --- $1 FAIL"
 	set -e
 	ERRMSG " --- $1 PASS"
 }
