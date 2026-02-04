@@ -25,4 +25,4 @@ test:
 test-debug:
 	./test/all.sh --debug
 
-.PHONY: all release clean test test-debug
+.PHONY: all release clean test test-debug dist/VERSION.hash
