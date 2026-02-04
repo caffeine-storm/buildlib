@@ -9,7 +9,8 @@ endif
 
 # Guard against weirdness by only running self-update if we're in a directory
 # called "build". It's "dist" in buildlib's source-control and users can
-# disable self-update by _not_ renaming the release tarball to "build".
+# disable self-update by _not_ renaming the directory created by extracting the
+# tarball.
 live-dir:=${shell basename $(realpath .)}
 ifneq "${live-dir}" "build"
 $(error "self-update is disabled unless the containing directory is called 'build'")

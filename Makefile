@@ -4,9 +4,9 @@ version:=${file <dist/VERSION}
 releasedir:=buildlib-v${version}
 releasetarball:=${releasedir}.tar.gz
 
-all: release
+all: ${releasetarball}
 
-release: ${releasetarball}
+release: ${releasetarball} test
 
 ${releasetarball}: dist/VERSION dist/VERSION.hash
 	tar -acf $@ '--transform=s,^dist,${releasedir},' $^ \

@@ -45,7 +45,7 @@ cleanup() {
 cleanup
 
 # Ensure that we can make a release tarball
-make ${silence} -C "$root" release version=-for-test
+make ${silence} -C "$root" "$tarball" version=-for-test
 if [[ ! -f "$root/$tarball" ]]; then
 	FAIL "can't find release tarball (expecting $tarball)"
 fi
