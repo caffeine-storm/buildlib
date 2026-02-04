@@ -102,6 +102,7 @@ assert_clean_slate() {
 	ERRMSG "PASS"
 }
 
+# TODO(tmckee): passing 'self-update' target doesn't match what's in README.md
 expect_self_update() {
 	ERRMSG " --- $1 ..."
 	make ${silence} -C $workingcopy -f self-update.mk self-update
@@ -124,9 +125,9 @@ expect_self_update "clean slate should 'just work'"
 # simulate local edits and/or "stale" versions.
 simulate_v_0_0_0() {
 	echo "0.0.0" > $workingcopy/VERSION
-	make ${silence} -C $workingcopy -f self-update.mk local.hash
-	# 'promote' the local.hash to be the hashes for v0.0.0
-	mv $workingcopy/local.hash $workingcopy/VERSION.hash
+	# Rewrite the VERSION.hash file to be consistent with whatever happens to be
+	# in the working copy right now.
+	make ${silence} -C $workingcopy -f self-update.mk VERSION.hash
 }
 
 #  1. files that have been culled upstream get removed locally

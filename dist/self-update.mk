@@ -15,24 +15,21 @@ ifneq "${live-dir}" "build"
 $(error "self-update is disabled unless the containing directory is called 'build'")
 endif
 
-# TODO(tmckee): pick a better directory for this; right now we'd clobber any
-# host-project's "update" directory.
-update-tmpdir:=../update
-
 # TODO(tmckee): stubbing upstream tarball fetch until we figure out release
-# strategy.
+# strategy. After that, we can add CI to buildlib. The tests can also specify a
+# specific upstream_url to use thereby avoiding a network fetch during test.
 upstream_url:=file://$(abspath ./../../buildlib-v0.0.1.tar.gz)
-self-update: no-local-changes |${update-tmpdir}
-	curl ${silence} -L ${upstream_url} -o ${update-tmpdir}/buildlib-upstream.tar.gz
-	tar -C ${update-tmpdir} -xf ${update-tmpdir}/buildlib-upstream.tar.gz
-	tar -O -x -f ${update-tmpdir}/buildlib-upstream.tar.gz --wildcards '*/VERSION' > ${update-tmpdir}/VERSION.upstream
+self-update: no-local-changes
+	curl ${silence} -L ${upstream_url} -o buildlib-upstream.tar.gz
+	tar -xf buildlib-upstream.tar.gz --wildcards '*/VERSION' -O > VERSION.upstream
 	# Only 'promote' the tarball if the upstream version is greater-than the
 	# local version.
-	if cat ./VERSION ${update-tmpdir}/VERSION.upstream | sort -Vuc &>/dev/null; then \
-		cd ../ && \
-		rm -rf build.old && \
-		mv ./build build.old && \
-		mv update/buildlib-v${file <${update-tmpdir}/VERSION.upstream} build ; \
+	if cat VERSION VERSION.upstream | sort -Vuc &>/dev/null; then \
+		newversion=$$(cat VERSION.upstream) && \
+		cd .. && \
+		tar -xf build/buildlib-upstream.tar.gz && \
+		mv build/ buildlib-v$${newversion}/build.old && \
+		mv buildlib-v$${newversion} build ; \
 	else \
 		echo "no update needed" ; \
 	fi
@@ -44,6 +41,3 @@ no-local-changes: |local.hash
 	@diff -q local.hash VERSION.hash || { echo ' !! detected local modifications; refusing to update' ; false ; }
 
 .PHONY: no-local-changes
-
-${update-tmpdir}:
-	mkdir -p $@
