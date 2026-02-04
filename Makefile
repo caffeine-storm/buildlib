@@ -26,4 +26,8 @@ test:
 test-debug:
 	./test/all.sh --debug
 
+.PHONY: release-tag
+release-tag:
+	git tag v${version}
+
 .PHONY: all release clean test test-debug
