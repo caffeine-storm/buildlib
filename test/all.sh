@@ -70,6 +70,9 @@ workingcopy=build
 
 oldhash=$(md5sum $workingcopy/testing-env.mk)
 
+# TODO(tmckee): prefer to dupe a canned clean slate for each individual test
+# but don't forget to assert-clean-slate at the end to verify the update went
+# through.
 assert_clean_slate() {
 	ERRMSGN " --- assert-clean-slate ($1)... "
 	ret=0
