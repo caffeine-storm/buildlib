@@ -1,10 +1,13 @@
 SHELL:=/bin/bash
 
-dotmakes:=${shell find . -name '*.mk' -type f | sort}
+distdir?=.
+dotmakes:=${shell find ${distdir} -name '*.mk' -type f | sort}
+dotmakenames:=${dotmakes:${distdir}/%=%}
 
-local.hash: ${dotmakes}
-	# Hash each file so that we can detect add/remove conflicts.
-	md5sum $^ > $@
+${distdir}/local.hash: ${dotmakes}
+	# Hash each of the files so that we can see what changed file-by-file. This
+	# will support reporting local modifications file-by-file.
+	{ cd ${distdir} ; md5sum ${dotmakenames} ; } > $@
 
-VERSION.hash: local.hash
-	mv $^ $@
+${distdir}/VERSION.hash: ${distdir}/local.hash
+	cp $^ $@

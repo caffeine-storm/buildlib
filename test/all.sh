@@ -61,6 +61,8 @@ if [[ $(tar -tf "$tarball" | grep -v '^buildlib-v-for-test' | wc -l) != 0 ]]; th
 	FAIL "some tar members weren't in the right directory"
 fi
 
+# -- start of self-update tests
+
 # Start from a clean slate but we need to rename the 'deployed' directory to
 # 'build' so that we can test self-updates.
 rm -rf build
@@ -149,5 +151,16 @@ expect_self_update "self-update should add new files"
 assert_clean_slate 3
 
 cleanup
+
+# -- end of self-update tests
+
+ERRMSGN "building a release tarball should work ... "
+make ${silence} -C ../ releaseball
+ERRMSG "PASS"
+
+# Make sure that "make releaseball" doesn't rebuild the tarball unnecessarily.
+ERRMSGN "re-building a release tarball should be a no-op ... "
+make ${silence} -q -C ../ releaseball || FAIL "shouldn't have to make the thing we just made!"
+ERRMSG "PASS"
 
 PASS

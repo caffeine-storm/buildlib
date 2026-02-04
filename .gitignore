@@ -2,3 +2,4 @@ buildlib-v0.0.1.tar.gz
 test/buildlib-v-for-test.tar.gz
 test/buildlib-v-for-test/
 dist/VERSION.hash
+dist/local.hash
