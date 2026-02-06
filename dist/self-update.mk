@@ -19,7 +19,7 @@ endif
 # TODO(tmckee): stubbing upstream tarball fetch until we figure out release
 # strategy. After that, we can add CI to buildlib. The tests can also specify a
 # specific upstream_url to use thereby avoiding a network fetch during test.
-upstream_url:=file://$(abspath ./../../buildlib-v0.0.1.tar.gz)
+upstream_url?=file://$(abspath ./../../buildlib-v0.0.2.tar.gz)
 self-update: no-local-changes
 	curl ${silence} -L ${upstream_url} -o buildlib-upstream.tar.gz
 	tar -xf buildlib-upstream.tar.gz --wildcards '*/VERSION' -O > VERSION.upstream
