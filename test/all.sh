@@ -40,7 +40,7 @@ tarball="$workingcopy.tar.gz"
 # bailed out and left artifacts for inspection; they're stale now so they can
 # go.
 cleanup() {
-	rm -rf $workingcopy build.old $tarball update
+	rm -rf $workingcopy build.old $tarball
 }
 cleanup
 
@@ -129,6 +129,7 @@ expect_self_update "clean slate should 'just work'"
 # simulate local edits and/or "stale" versions.
 simulate_v_0_0_0() {
 	echo "0.0.0" > $workingcopy/VERSION
+	rm -rf $workingcopy/build.old
 	# Rewrite the VERSION.hash file to be consistent with whatever happens to be
 	# in the working copy right now.
 	make ${silence} -C $workingcopy -f self-update.mk VERSION.hash
