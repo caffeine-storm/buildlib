@@ -75,7 +75,7 @@ oldhash=$(md5sum $workingcopy/testing-env.mk)
 # TODO(tmckee): prefer to dupe a canned clean slate for each individual test
 # but don't forget to assert-clean-slate at the end to verify the update went
 # through.
-assert_clean_slate() {
+assert-clean-slate() {
 	ERRMSGN " --- assert-clean-slate ($1)... "
 	ret=0
 
@@ -107,13 +107,13 @@ assert_clean_slate() {
 	ERRMSG "PASS"
 }
 
-expect_self_update() {
+expect-self-update() {
 	ERRMSG " --- $1 ..."
 	make ${silence} -C $workingcopy -f self-update.mk
 	ERRMSG " --- $1 PASS"
 }
 
-expect_no_self_update() {
+expect-no-self-update() {
 	ERRMSG " --- $1 ..."
 	set +e
 	make ${silence} -C $workingcopy -f self-update.mk && FAIL " --- $1 FAIL"
@@ -121,13 +121,13 @@ expect_no_self_update() {
 	ERRMSG " --- $1 PASS"
 }
 
-assert_clean_slate 0
+assert-clean-slate 0
 
-expect_self_update "clean slate should 'just work'"
+expect-self-update "clean slate should 'just work'"
 
 # Test the update helpers by tweaking the tests' copy of the buildlib to
 # simulate local edits and/or "stale" versions.
-simulate_v_0_0_0() {
+simulate-v0.0.0() {
 	echo "0.0.0" > $workingcopy/VERSION
 	rm -rf $workingcopy/build.old
 	# Rewrite the VERSION.hash file to be consistent with whatever happens to be
@@ -136,20 +136,20 @@ simulate_v_0_0_0() {
 }
 
 #  1. files that have been culled upstream get removed locally
-assert_clean_slate 1
+assert-clean-slate 1
 touch $workingcopy/stalefile.mk
-expect_no_self_update "self-update should bail out if there are local modifications"
-simulate_v_0_0_0
-expect_self_update "self-update should cull files that were removed upstream"
+expect-no-self-update "self-update should bail out if there are local modifications"
+simulate-v0.0.0
+expect-self-update "self-update should cull files that were removed upstream"
 
 #  2. files that have appeared upstream show up locally
-assert_clean_slate 2
+assert-clean-slate 2
 rm $workingcopy/rejectfiles.mk
-expect_no_self_update "self-update should bail out if there are local modifications"
-simulate_v_0_0_0
-expect_self_update "self-update should add new files"
+expect-no-self-update "self-update should bail out if there are local modifications"
+simulate-v0.0.0
+expect-self-update "self-update should add new files"
 
-assert_clean_slate 3
+assert-clean-slate 3
 
 cleanup
 

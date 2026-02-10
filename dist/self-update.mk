@@ -29,11 +29,11 @@ repo-latest-version=$(shell ${list-major-version-tags} | ${git-tag-to-version} |
 
 # TODO(tmckee): stubbing upstream tarball fetch until we figure out release
 # strategy. After that, we can add CI to buildlib. The tests can also specify a
-# specific upstream_url to use thereby avoiding a network fetch during test.
-upstream_url?=file://$(abspath ./../../buildlib-v0.0.2.tar.gz)
+# specific upstream-url to use thereby avoiding a network fetch during test.
+upstream-url?=file://$(abspath ./../../buildlib-v0.0.2.tar.gz)
 
 self-update: no-local-changes
-	curl ${silence} -L ${upstream_url} -o buildlib-upstream.tar.gz
+	curl ${silence} -L ${upstream-url} -o buildlib-upstream.tar.gz
 	tar -xf buildlib-upstream.tar.gz --wildcards '*/VERSION' -O > VERSION.upstream
 	# Only 'promote' the tarball if the upstream version is greater-than the
 	# local version.
