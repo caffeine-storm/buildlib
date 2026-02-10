@@ -15,7 +15,7 @@ ${releasetarball}: dist/VERSION dist/VERSION.hash
 
 # Always delegate to dist/hash.mk to check if content hashes need to be
 # rebuilt.
-distdir:=dist
+build-dir:=dist
 include dist/hash.mk
 
 clean:
