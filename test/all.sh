@@ -156,12 +156,12 @@ cleanup
 # -- end of self-update tests
 
 ERRMSGN "building a release tarball should work ... "
-make ${silence} -C ../ releaseball
+make ${silence} -C ../ release-ball
 ERRMSG "PASS"
 
-# Make sure that "make releaseball" doesn't rebuild the tarball unnecessarily.
+# Make sure that "make release-ball" doesn't rebuild the tarball unnecessarily.
 ERRMSGN "re-building a release tarball should be a no-op ... "
-make ${silence} -q -C ../ releaseball || FAIL "shouldn't have to make the thing we just made!"
+make ${silence} -q -C ../ release-ball || FAIL "shouldn't have to make the thing we just made!"
 ERRMSG "PASS"
 
 PASS

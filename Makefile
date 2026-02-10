@@ -1,16 +1,16 @@
 SHELL:=/bin/bash
 
 version:=${file <dist/VERSION}
-releasedir:=buildlib-v${version}
-releasetarball:=${releasedir}.tar.gz
+release-dir:=buildlib-v${version}
+release-tarball:=${release-dir}.tar.gz
 
-all: ${releasetarball}
+all: ${release-tarball}
 
-releaseball: ${releasetarball}
-release: ${releasetarball} test
+release-ball: ${release-tarball}
+release: ${release-tarball} test
 
-${releasetarball}: dist/VERSION dist/VERSION.hash
-	tar -acf $@ '--transform=s,^dist,${releasedir},' $^ \
+${release-tarball}: dist/VERSION dist/VERSION.hash
+	tar -acf $@ '--transform=s,^dist,${release-dir},' $^ \
 		-T <(sed 's,.*  ,dist/,' < dist/VERSION.hash)
 
 # Always delegate to dist/hash.mk to check if content hashes need to be
@@ -19,7 +19,7 @@ build-dir:=dist
 include dist/hash.mk
 
 clean:
-	rm -rf ${releasetarball} ${releasedir} dist/VERSION.hash
+	rm -rf ${release-tarball} ${release-dir} dist/VERSION.hash
 
 test:
 	./test/all.sh
@@ -31,4 +31,4 @@ test-debug:
 release-tag:
 	git tag v${version}
 
-.PHONY: all release clean test test-debug
+.PHONY: all release release-ball clean test test-debug
