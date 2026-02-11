@@ -18,8 +18,7 @@ $(error "self-update is disabled unless the containing directory is called 'buil
 endif
 
 # For tests, we can use '.' for fetching tag info just from the local git repo.
-# repo-url?=https://github.com/caffeine-storm/buildlib
-repo-url?=.
+repo-url?=https://github.com/caffeine-storm/buildlib
 
 list-major-version-tags:=git ls-remote --tags "${repo-url}" 'v${base-rev-major-version}\.*'
 git-tag-to-version:=sed -e 's,.*/\(v[0-9.]*\)^{}$$,\1,'
@@ -27,10 +26,9 @@ order-by-version-descending:=sort -Vr
 take-first:=head -1
 repo-latest-version=$(shell ${list-major-version-tags} | ${git-tag-to-version} | ${order-by-version-descending} | ${take-first})
 
-# TODO(tmckee): stubbing upstream tarball fetch until we figure out release
-# strategy. After that, we can add CI to buildlib. The tests can also specify a
-# specific upstream-url to use thereby avoiding a network fetch during test.
-upstream-url?=file://$(abspath ./../../buildlib-v0.0.2.tar.gz)
+# The tests can specify a specific upstream-url to use thereby avoiding a
+# network fetch during test.
+upstream-url?=${repo-url}/releases/download/${repo-latest-version}/buildlib-${repo-latest-version}.tar.gz
 
 self-update: no-local-changes
 	curl ${silence} -L ${upstream-url} -o buildlib-upstream.tar.gz

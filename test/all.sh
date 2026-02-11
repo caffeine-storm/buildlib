@@ -94,7 +94,6 @@ assert-clean-slate() {
 		ret=$((ret + 4))
 	fi
 
-	workingcopyversion=$(cat $workingcopy/VERSION)
 	if ! diff $workingcopy/VERSION $root/dist/VERSION; then
 		ERRMSG "test pre-conditions violated; wrong VERSION file contents"
 		ret=$((ret + 8))
@@ -107,16 +106,22 @@ assert-clean-slate() {
 	ERRMSG "PASS"
 }
 
+run-self-update() {
+	local rootver=$(cat ../dist/VERSION)
+	local selfupdatevars="repo-url=. upstream-url=file://$(realpath ../buildlib-v${rootver}.tar.gz)"
+	make ${silence} -C $workingcopy ${selfupdatevars} -f self-update.mk
+}
+
 expect-self-update() {
 	ERRMSG " --- $1 ..."
-	make ${silence} -C $workingcopy -f self-update.mk
+	run-self-update
 	ERRMSG " --- $1 PASS"
 }
 
 expect-no-self-update() {
 	ERRMSG " --- $1 ..."
 	set +e
-	make ${silence} -C $workingcopy -f self-update.mk && FAIL " --- $1 FAIL"
+	run-self-update && FAIL " --- $1 FAIL"
 	set -e
 	ERRMSG " --- $1 PASS"
 }
