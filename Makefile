@@ -4,9 +4,13 @@ version:=${file <dist/VERSION}
 release-dir:=buildlib-v${version}
 release-tarball:=${release-dir}.tar.gz
 
+.PHONY: all
 all: ${release-tarball}
 
+.PHONY: release-ball
 release-ball: ${release-tarball}
+
+.PHONY: release
 release: ${release-tarball} test
 
 ${release-tarball}: dist/VERSION dist/VERSION.hash
@@ -18,17 +22,18 @@ ${release-tarball}: dist/VERSION dist/VERSION.hash
 build-dir:=dist
 include dist/hash.mk
 
+.PHONY: clean
 clean:
 	rm -rf ${release-tarball} ${release-dir} dist/VERSION.hash
 
+.PHONY: test
 test:
 	./test/all.sh
 
+.PHONY: test-debug
 test-debug:
 	./test/all.sh --debug
 
 .PHONY: release-tag
 release-tag:
 	git tag -s v${version}
-
-.PHONY: all release release-ball clean test test-debug
