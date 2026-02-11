@@ -36,4 +36,4 @@ test-debug:
 
 .PHONY: release-tag
 release-tag:
-	git tag -s v${version}
+	git tag --sign v${version}
