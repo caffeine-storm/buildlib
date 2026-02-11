@@ -29,6 +29,6 @@ test-debug:
 
 .PHONY: release-tag
 release-tag:
-	git tag v${version}
+	git tag -s v${version}
 
 .PHONY: all release release-ball clean test test-debug
