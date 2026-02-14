@@ -33,31 +33,40 @@ PASS() {
 	exit 0
 }
 
-workingcopy=buildlib-v-for-test
+currentversion=$(cat $root/dist/VERSION)
+workingcopy=buildlib-v${currentversion}
 tarball="$workingcopy.tar.gz"
 
 # Before trying much of anything, try to cleanup in case a previous test run
 # bailed out and left artifacts for inspection; they're stale now so they can
 # go.
 cleanup() {
-	rm -rf $workingcopy build.old $tarball
+	rm -rf \
+		$root/$tarball \
+		$root/test/$workingcopy \
+		$root/test/build.old \
+		$root/test/$tarball \
+	;
 }
 cleanup
 
-# Ensure that we can make a release tarball
-make ${silence} -C "$root" "$tarball" version=-for-test
-if [[ ! -f "$root/$tarball" ]]; then
+ERRMSGN "building a release tarball should work ... "
+make ${silence} release-ball
+if [[ ! -f "$tarball" ]]; then
 	FAIL "can't find release tarball (expecting $tarball)"
 fi
+ERRMSG "PASS"
 
-# Put the generated tarball under the test/ directory for the rest of these
-# tests.
-mv "$root/$tarball" "$here/"
+# Make sure that "make release-ball" doesn't rebuild the tarball unnecessarily.
+ERRMSGN "re-building a release tarball should be a no-op ... "
+make ${silence} -q release-ball || FAIL "shouldn't have to make the thing we just made!"
+ERRMSG "PASS"
+
 cd "$here"
 root=".."
 
 # Make sure we didn't accidentally create a tar-bomb.
-if [[ $(tar -tf "$tarball" | grep -v '^buildlib-v-for-test' | wc -l) != 0 ]]; then
+if [[ $(tar -tf "$root/$tarball" | grep -v "^buildlib-v${currentversion}" | wc -l) != 0 ]]; then
 	FAIL "some tar members weren't in the right directory"
 fi
 
@@ -66,7 +75,7 @@ fi
 # Start from a clean slate but we need to rename the 'deployed' directory to
 # 'build' so that we can test self-updates.
 rm -rf build
-tar -xf "$tarball"
+tar -xf "$root/$tarball"
 mv $workingcopy build
 workingcopy=build
 
@@ -159,14 +168,5 @@ assert-clean-slate 3
 cleanup
 
 # -- end of self-update tests
-
-ERRMSGN "building a release tarball should work ... "
-make ${silence} -C ../ release-ball
-ERRMSG "PASS"
-
-# Make sure that "make release-ball" doesn't rebuild the tarball unnecessarily.
-ERRMSGN "re-building a release tarball should be a no-op ... "
-make ${silence} -q -C ../ release-ball || FAIL "shouldn't have to make the thing we just made!"
-ERRMSG "PASS"
 
 PASS
