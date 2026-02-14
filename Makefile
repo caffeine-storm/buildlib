@@ -19,7 +19,7 @@ ${release-tarball}: dist/VERSION dist/VERSION.hash
 
 # Always delegate to dist/hash.mk to check if content hashes need to be
 # rebuilt.
-build-dir:=dist
+buildlib-dir:=dist
 include dist/hash.mk
 
 .PHONY: clean

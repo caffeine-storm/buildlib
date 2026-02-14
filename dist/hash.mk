@@ -1,19 +1,19 @@
 SHELL:=/bin/bash
 
-build-dir?=.
-build-dirs:=${shell find ${build-dir} -type d | sort}
+buildlib-dir?=.
+buildlib-dirs:=${shell find ${buildlib-dir} -type d | sort}
 
-dot-makes:=${shell find ${build-dir} -name '*.mk' -type f | sort}
-dot-make-names:=${dot-makes:${build-dir}/%=%}
+dot-makes:=${shell find ${buildlib-dir} -name '*.mk' -type f | sort}
+dot-make-names:=${dot-makes:${buildlib-dir}/%=%}
 
 # If a file or subdirectory gets created or removed, we can notice it by
 # checking directory modification times.
-${build-dir}/local.hash: ${build-dirs}
+${buildlib-dir}/local.hash: ${buildlib-dirs}
 
-${build-dir}/local.hash: ${dot-makes}
+${buildlib-dir}/local.hash: ${dot-makes}
 	# Hash each of the files so that we can see what changed file-by-file. This
 	# will support reporting local modifications file-by-file.
-	{ cd ${build-dir} ; md5sum ${dot-make-names} ; } > $@
+	{ cd ${buildlib-dir} ; md5sum ${dot-make-names} ; } > $@
 
-${build-dir}/VERSION.hash: ${build-dir}/local.hash
+${buildlib-dir}/VERSION.hash: ${buildlib-dir}/local.hash
 	cp $^ $@

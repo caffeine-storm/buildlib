@@ -1,6 +1,7 @@
 # recipes for running tests
 
-include build/rejectfiles.mk
+buildlib-dir?=build
+include ${buildlib-dir}/rejectfiles.mk
 
 .PHONY: test \
 	test-verbose \
